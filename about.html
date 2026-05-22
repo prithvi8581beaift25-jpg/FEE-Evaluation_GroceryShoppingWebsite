@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+// Theme toggle
+function toggleTheme() {
+  var d = document.documentElement;
+  var isDark = d.getAttribute('data-theme') === 'dark';
+  d.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  localStorage.setItem('fm_theme', isDark ? 'light' : 'dark');
+}
+(function() {
+  var saved = localStorage.getItem('fm_theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+  else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+</script>
+  <meta charset="UTF-8"/>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About – Fresh Mart</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <div class="nav-left">
+      <a href="index.html" class="logo"><span class="logo-leaf">🌿</span> Fresh<span>Mart</span></a>
+      <div class="nav-links">
+        <a href="index.html">Shop</a>
+        <a href="deals.html">Deals</a>
+        <a href="about.html" class="active">About</a>
+      </div>
+    </div>
+    <div class="nav-actions">
+            <!-- Auth Buttons (logged out) -->
+      <div id="authButtons" style="display:flex;gap:8px;align-items:center">
+        <button class="auth-nav-btn" onclick="openAuthModal('login')">Sign In</button>
+        <button class="auth-nav-btn auth-nav-btn-primary" onclick="openAuthModal('signup')">Sign Up</button>
+      </div>
+      <!-- User Menu (logged in) -->
+      <div id="userMenu" style="display:none;gap:8px;align-items:center">
+        <span id="userName" class="user-greeting"></span>
+        <button class="auth-nav-btn" onclick="logout()">Logout</button>
+      </div>
+      <a href="cart.html" class="cart-btn">🛒 Cart <span class="cart-count" id="cartCount">0</span></a>
+      <div class="theme-toggle-wrap">
+        <span class="theme-icon">☀️</span>
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle dark mode"></button>
+        <span class="theme-icon">🌙</span>
+      </div>
+      <button class="hamburger" onclick="toggleMenu()">☰</button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">🛍 Shop</a>
+    <a href="deals.html">🔥 Deals</a>
+    <a href="about.html">ℹ️ About</a>
+    <a href="cart.html">🛒 Cart</a>
+    <div class="mobile-menu-divider"></div>
+    <div id="mobileAuthButtons" class="mobile-auth-row">
+      <button class="auth-nav-btn" onclick="openAuthModal('login');toggleMenu()">Sign In</button>
+      <button class="auth-nav-btn auth-nav-btn-primary" onclick="openAuthModal('signup');toggleMenu()">Sign Up</button>
+    </div>
+    <div id="mobileUserRow" class="mobile-user-row" style="display:none">
+      <span id="mobileUserName" class="mobile-username"></span>
+      <button class="auth-nav-btn" onclick="logout()">Logout</button>
+    </div>
+    <div class="mobile-theme-row">
+      <span style="font-size:0.85rem;color:var(--gray)">Dark Mode</span>
+      <div class="theme-toggle-wrap">
+        <span class="theme-icon">☀️</span>
+        <button class="theme-toggle" onclick="toggleTheme()"></button>
+        <span class="theme-icon">🌙</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ABOUT HERO -->
+<section class="about-hero">
+  <div class="container">
+    <p class="hero-tag">Our Story</p>
+    <h1>Rooted in Freshness,<br/>Grown with Care</h1>
+    <p class="about-sub">We believe everyone deserves access to food that's fresh, nutritious, and honestly priced. FreshMart was born from that simple conviction.</p>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num">5,000+</div>
+        <div class="stat-label">Happy Customers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">150+</div>
+        <div class="stat-label">Local Farm Partners</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">30 min</div>
+        <div class="stat-label">Average Delivery</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">98%</div>
+        <div class="stat-label">Satisfaction Rate</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="values-section">
+  <div class="container">
+    <h2 class="section-title">What We Stand For</h2>
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="value-icon">🌱</div>
+        <h3>Farm-to-Table</h3>
+        <p>Direct partnerships with 150+ local farms means zero middlemen and maximum freshness on your plate.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">♻️</div>
+        <h3>Sustainable Packaging</h3>
+        <p>All our packaging is 100% biodegradable. We're committed to reducing our carbon footprint every step of the way.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">💰</div>
+        <h3>Honest Pricing</h3>
+        <p>No hidden fees, no surprise markups. What you see is what you pay – always fair, always transparent.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🤝</div>
+        <h3>Community First</h3>
+        <p>We donate 2% of every order to local food banks. Shopping with us means giving back to those in need.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team-section">
+  <div class="container">
+    <h2 class="section-title">Meet the Team</h2>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">👨‍🌾</div>
+        <h3>Arjun Mehta</h3>
+        <p class="team-role">Founder & CEO</p>
+        <p>Ex-farmer turned entrepreneur. Arjun built FreshMart to honour the hardwork of India's farmers.</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">👩‍💻</div>
+        <h3>Priya Sharma</h3>
+        <p class="team-role">Head of Tech</p>
+        <p>Priya makes sure your grocery experience is seamless, fast, and delightful every time.</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">👨‍🍳</div>
+        <h3>Rahul Kapoor</h3>
+        <p class="team-role">Quality Manager</p>
+        <p>Every product passes Rahul's rigorous freshness test before reaching your doorstep.</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">👩‍💼</div>
+        <h3>Sneha Patel</h3>
+        <p class="team-role">Head of Delivery</p>
+        <p>Sneha built our last-mile network from scratch — 30-minute delivery in Chandigarh is her doing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="about-cta">
+  <div class="container">
+    <h2>Ready for Freshness?</h2>
+    <p>Join thousands of happy customers enjoying farm-fresh groceries delivered daily.</p>
+    <a href="index.html" class="hero-btn">Shop Now →</a>
+  </div>
+</section>
+
+<div class="toast" id="toast"></div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo">🌿 Fresh<span>Mart</span></span>
+      <p>Bringing nature's best to your table.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <a href="index.html">Shop</a>
+      <a href="deals.html">Deals</a>
+      <a href="cart.html">Cart</a>
+      <a href="about.html">About</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p>📞 +91 98765 43210</p>
+      <p>📧 hello@freshmart.in</p>
+      <p>📍 Chandigarh, India</p>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 FreshMart. All rights reserved.</div>
+</footer>
+
+<script src="products.js"></script>
+<script src="cart-utils.js"></script>
+<script src="auth.js"></script>
+<script>
+function toggleMenu() {
+  var menu = document.getElementById("mobileMenu");
+  if (menu.style.display === "flex") {
+    menu.style.display = "none";
+  } else {
+    menu.style.display = "flex";
+  }
+}
+</script>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal" style="display:none;">
+  <div class="modal auth-modal">
+    <button class="modal-close" onclick="closeAuthModal()">✕</button>
+    <div class="auth-tabs">
+      <button id="loginTab" class="auth-tab active-tab" onclick="switchAuthTab('login')">Sign In</button>
+      <button id="signupTab" class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div>
+    <div id="loginForm">
+      <div class="modal-icon">🔐</div>
+      <h2>Welcome Back</h2>
+      <p class="modal-sub">Sign in to sync your cart &amp; orders</p>
+      <div class="auth-form">
+        <input type="email" id="loginEmail" placeholder="Email address" class="form-input"/>
+        <input type="password" id="loginPassword" placeholder="Password" class="form-input"/>
+        <span class="field-error" id="loginError"></span>
+        <button id="loginBtn" class="checkout-btn" onclick="handleLogin()">Sign In</button>
+        <p class="auth-switch">No account? <a href="#" onclick="switchAuthTab('signup')">Sign up free</a></p>
+      </div>
+    </div>
+    <div id="signupForm" style="display:none;">
+      <div class="modal-icon">🌿</div>
+      <h2>Create Account</h2>
+      <p class="modal-sub">Join FreshMart for a better experience</p>
+      <div class="auth-form">
+        <input type="text" id="signupName" placeholder="Full name" class="form-input"/>
+        <input type="email" id="signupEmail" placeholder="Email address" class="form-input"/>
+        <input type="password" id="signupPassword" placeholder="Password (min 6 chars)" class="form-input"/>
+        <input type="password" id="signupConfirm" placeholder="Confirm password" class="form-input"/>
+        <span class="field-error" id="signupError"></span>
+        <button id="signupBtn" class="checkout-btn" onclick="handleSignup()">Create Account</button>
+        <p class="auth-switch">Have an account? <a href="#" onclick="switchAuthTab('login')">Sign in</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="auth.js"></script>
+</body>
+</html>

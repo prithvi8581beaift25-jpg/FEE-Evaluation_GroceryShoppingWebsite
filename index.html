@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+// Theme toggle
+function toggleTheme() {
+  var d = document.documentElement;
+  var isDark = d.getAttribute('data-theme') === 'dark';
+  d.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  localStorage.setItem('fm_theme', isDark ? 'light' : 'dark');
+}
+(function() {
+  var saved = localStorage.getItem('fm_theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+  else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+</script>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fresh Mart – Farm-to-Table Grocery</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <div class="nav-left">
+      <a href="index.html" class="logo">
+        <span class="logo-leaf">🌿</span> Fresh<span>Mart</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="active">Shop</a>
+        <a href="deals.html">Deals</a>
+        <a href="about.html">About</a>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <!-- Auth Buttons (logged out) -->
+      <div id="authButtons" style="display:flex;gap:8px;align-items:center">
+        <button class="auth-nav-btn" onclick="openAuthModal('login')">Sign In</button>
+        <button class="auth-nav-btn auth-nav-btn-primary" onclick="openAuthModal('signup')">Sign Up</button>
+      </div>
+      <!-- User Menu (logged in) -->
+      <div id="userMenu" style="display:none;gap:8px;align-items:center">
+        <span id="userName" class="user-greeting"></span>
+        <button class="auth-nav-btn" onclick="logout()">Logout</button>
+      </div>
+      <a href="cart.html" class="cart-btn">
+        🛒 Cart <span class="cart-count" id="cartCount">0</span>
+      </a>
+      <div class="theme-toggle-wrap">
+        <span class="theme-icon">☀️</span>
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle dark mode"></button>
+        <span class="theme-icon">🌙</span>
+      </div>
+      <button class="hamburger" onclick="toggleMenu()">☰</button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">🛍 Shop</a>
+    <a href="deals.html">🔥 Deals</a>
+    <a href="about.html">ℹ️ About</a>
+    <a href="cart.html">🛒 Cart</a>
+    <div class="mobile-menu-divider"></div>
+    <div id="mobileAuthButtons" class="mobile-auth-row">
+      <button class="auth-nav-btn" onclick="openAuthModal('login');toggleMenu()">Sign In</button>
+      <button class="auth-nav-btn auth-nav-btn-primary" onclick="openAuthModal('signup');toggleMenu()">Sign Up</button>
+    </div>
+    <div id="mobileUserRow" class="mobile-user-row" style="display:none">
+      <span id="mobileUserName" class="mobile-username"></span>
+      <button class="auth-nav-btn" onclick="logout()">Logout</button>
+    </div>
+    <div class="mobile-theme-row">
+      <span style="font-size:0.85rem;color:var(--gray)">Dark Mode</span>
+      <div class="theme-toggle-wrap">
+        <span class="theme-icon">☀️</span>
+        <button class="theme-toggle" onclick="toggleTheme()"></button>
+        <span class="theme-icon">🌙</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <p class="hero-tag">Freshness Delivered Daily</p>
+    <h1 class="hero-title">Farm-Fresh<br/>Groceries at<br/>Your Door</h1>
+    <p class="hero-sub">Sourced locally. Delivered swiftly. No compromise on quality.</p>
+    <a href="#shop" class="hero-btn">Shop Now ↓</a>
+  </div>
+  <div class="hero-visual">
+    <div class="slideshow" id="heroSlideshow">
+      <div class="slide active">
+        <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&q=80" alt="Fresh vegetables"/>
+        <div class="slide-caption">🥦 Fresh Vegetables – Straight from the Farm</div>
+      </div>
+      <div class="slide">
+        <img src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=800&q=80" alt="Fresh fruits"/>
+        <div class="slide-caption">🍎 Seasonal Fruits – Picked at Peak Ripeness</div>
+      </div>
+      <div class="slide">
+        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80" alt="Healthy food"/>
+        <div class="slide-caption">🥗 Eat Fresh, Live Better</div>
+      </div>
+      <div class="slide">
+        <img src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=800&q=80" alt="Grocery basket"/>
+        <div class="slide-caption">🛒 Delivered to Your Door in 30 Minutes</div>
+      </div>
+      <div class="slide">
+        <img src="https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=800&q=80" alt="Organic produce"/>
+        <div class="slide-caption">🌱 100% Organic – No Compromise</div>
+      </div>
+      <div class="slide-dots" id="slideDots"></div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES STRIP -->
+<section class="categories" id="shop">
+  <div class="container">
+    <h2 class="section-title">Shop by Category</h2>
+    <div class="cat-strip">
+      <button class="cat-btn active" onclick="filterCategory('all', this)">All</button>
+      <button class="cat-btn" onclick="filterCategory('fruits', this)">🍎 Fruits</button>
+      <button class="cat-btn" onclick="filterCategory('vegetables', this)">🥦 Vegetables</button>
+      <button class="cat-btn" onclick="filterCategory('dairy', this)">🥛 Dairy</button>
+      <button class="cat-btn" onclick="filterCategory('bakery', this)">🍞 Bakery</button>
+      <button class="cat-btn" onclick="filterCategory('snacks', this)">🍿 Snacks</button>
+      <button class="cat-btn" onclick="filterCategory('beverages', this)">🧃 Beverages</button>
+      <button class="cat-btn nonveg-btn" onclick="filterCategory('nonveg', this)">🍗 Non-Veg</button>
+    </div>
+
+    <!-- SORT & FILTER BAR -->
+    <div class="sort-bar">
+      <input type="text" id="searchBar" placeholder="🔍 Search groceries…" class="search-input-inline" oninput="filterSearch()" />
+      <span class="results-count" id="resultsCount">Showing items</span>
+      <div class="sort-controls">
+        <label>Sort by:</label>
+        <select id="sortSelect" onchange="sortProducts()">
+          <option value="default">Featured</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="name-asc">Name: A–Z</option>
+          <option value="name-desc">Name: Z–A</option>
+          <option value="rating">Top Rated</option>
+        </select>
+        <label>Max Price: <strong id="priceLabel">₹500</strong></label>
+        <input type="range" id="priceRange" min="10" max="500" value="500" oninput="filterPrice(this.value)" />
+      </div>
+    </div>
+
+    <!-- PRODUCT GRID -->
+    <div class="product-grid" id="productGrid"></div>
+
+    <!-- EMPTY STATE -->
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <p>😔 No products found. Try changing filters.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TOAST NOTIFICATION -->
+<div class="toast" id="toast"></div>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal" style="display:none;">
+  <div class="modal auth-modal">
+    <button class="modal-close" onclick="closeAuthModal()">✕</button>
+    <div class="auth-tabs">
+      <button id="loginTab" class="auth-tab active-tab" onclick="switchAuthTab('login')">Sign In</button>
+      <button id="signupTab" class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div>
+    <!-- LOGIN -->
+    <div id="loginForm">
+      <div class="modal-icon">🔐</div>
+      <h2>Welcome Back</h2>
+      <p class="modal-sub">Sign in to sync your cart & orders</p>
+      <div class="auth-form">
+        <input type="email" id="loginEmail" placeholder="Email address" class="form-input"/>
+        <input type="password" id="loginPassword" placeholder="Password" class="form-input"/>
+        <span class="field-error" id="loginError"></span>
+        <button id="loginBtn" class="checkout-btn" onclick="handleLogin()">Sign In</button>
+        <p class="auth-switch">No account? <a href="#" onclick="switchAuthTab('signup')">Sign up free</a></p>
+      </div>
+    </div>
+    <!-- SIGNUP -->
+    <div id="signupForm" style="display:none;">
+      <div class="modal-icon">🌿</div>
+      <h2>Create Account</h2>
+      <p class="modal-sub">Join FreshMart for a better experience</p>
+      <div class="auth-form">
+        <input type="text" id="signupName" placeholder="Full name" class="form-input"/>
+        <input type="email" id="signupEmail" placeholder="Email address" class="form-input"/>
+        <input type="password" id="signupPassword" placeholder="Password (min 6 chars)" class="form-input"/>
+        <input type="password" id="signupConfirm" placeholder="Confirm password" class="form-input"/>
+        <span class="field-error" id="signupError"></span>
+        <button id="signupBtn" class="checkout-btn" onclick="handleSignup()">Create Account</button>
+        <p class="auth-switch">Have an account? <a href="#" onclick="switchAuthTab('login')">Sign in</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NUTRITION MODAL -->
+<div class="modal-overlay" id="nutritionModal" style="display:none;" onclick="if(event.target===this)closeNutritionModal()">
+  <div class="modal nutrition-modal">
+    <button class="modal-close" onclick="closeNutritionModal()">✕</button>
+    <img id="nutritionImg" src="" alt="" class="nutrition-modal-img"/>
+    <h2 id="nutritionTitle"></h2>
+    <p class="nutrition-subtitle">Nutritional Info (per serving)</p>
+    <div class="nutrition-grid" id="nutritionGrid"></div>
+    <button class="hero-btn" style="margin-top:18px" onclick="closeNutritionModal()">Close</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo">🌿 Fresh<span>Mart</span></span>
+      <p>Bringing nature's best to your table since 2020.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <a href="index.html">Shop</a>
+      <a href="deals.html">Deals</a>
+      <a href="cart.html">Cart</a>
+      <a href="about.html">About Us</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p>📞 +91 98765 43210</p>
+      <p>📧 hello@freshmart.in</p>
+      <p>📍 Chandigarh, India</p>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 FreshMart. All rights reserved.</div>
+</footer>
+
+<script src="products.js"></script>
+<script src="cart-utils.js"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+<div id="freshmart-chat-root"></div>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel" src="freshmart-chatbot.jsx"></script>
+<script type="text/babel">
+  ReactDOM.createRoot(document.getElementById('freshmart-chat-root')).render(
+    React.createElement(FreshMartChatbot)
+  );
+</script>
+</body>
+</html>

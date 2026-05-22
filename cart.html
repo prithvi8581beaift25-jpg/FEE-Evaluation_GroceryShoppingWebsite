@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+// Theme toggle
+function toggleTheme() {
+  var d = document.documentElement;
+  var isDark = d.getAttribute('data-theme') === 'dark';
+  d.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  localStorage.setItem('fm_theme', isDark ? 'light' : 'dark');
+}
+(function() {
+  var saved = localStorage.getItem('fm_theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+  else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+</script>
+  <meta charset="UTF-8"/>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Cart – Fresh Mart</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <div class="nav-left">
+      <a href="index.html" class="logo">
+        <span class="logo-leaf">🌿</span> Fresh<span>Mart</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Shop</a>
+        <a href="deals.html">Deals</a>
+        <a href="about.html">About</a>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <a href="cart.html" class="cart-btn active-page">
+        🛒 Cart <span class="cart-count" id="cartCount">0</span>
+      </a>
+      <div class="theme-toggle-wrap">
+        <span class="theme-icon">☀️</span>
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle dark mode"></button>
+        <span class="theme-icon">🌙</span>
+      </div>
+      <button class="hamburger" onclick="toggleMenu()">☰</button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">🛍 Shop</a>
+    <a href="deals.html">🔥 Deals</a>
+    <a href="about.html">ℹ️ About</a>
+    <a href="cart.html">🛒 Cart</a>
+    <div class="mobile-menu-divider"></div>
+    <div id="mobileAuthButtons" class="mobile-auth-row">
+      <button class="auth-nav-btn" onclick="openAuthModal('login');toggleMenu()">Sign In</button>
+      <button class="auth-nav-btn auth-nav-btn-primary" onclick="openAuthModal('signup');toggleMenu()">Sign Up</button>
+    </div>
+    <div id="mobileUserRow" class="mobile-user-row" style="display:none">
+      <span id="mobileUserName" class="mobile-username"></span>
+      <button class="auth-nav-btn" onclick="logout()">Logout</button>
+    </div>
+    <div class="mobile-theme-row">
+      <span style="font-size:0.85rem;color:var(--gray)">Dark Mode</span>
+      <div class="theme-toggle-wrap">
+        <span class="theme-icon">☀️</span>
+        <button class="theme-toggle" onclick="toggleTheme()"></button>
+        <span class="theme-icon">🌙</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- CART PAGE -->
+<main class="cart-page">
+  <div class="container">
+    <div class="page-header">
+      <h1>🛒 Your Cart</h1>
+      <a href="index.html" class="back-link">← Continue Shopping</a>
+    </div>
+
+    <!-- EMPTY CART -->
+    <div id="emptyCart" class="empty-cart" style="display:none;">
+      <div class="empty-icon">🛒</div>
+      <h2>Your cart is empty</h2>
+      <p>Looks like you haven't added anything yet.</p>
+      <a href="index.html" class="hero-btn">Start Shopping</a>
+    </div>
+
+    <!-- CART CONTENT -->
+    <div id="cartContent" class="cart-layout">
+
+      <!-- CART ITEMS -->
+      <div class="cart-items-section">
+        <div class="cart-sort-bar">
+          <span id="cartItemCount"></span>
+          <div class="sort-controls">
+            <label>Sort by:</label>
+            <select id="cartSort" onchange="sortCart()">
+              <option value="default">Added Order</option>
+              <option value="price-asc">Price: Low → High</option>
+              <option value="price-desc">Price: High → Low</option>
+              <option value="name-asc">Name: A–Z</option>
+              <option value="qty-desc">Quantity: Most First</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="cartItemsList"></div>
+
+        <button class="clear-btn" onclick="clearCart()">🗑 Clear Cart</button>
+      </div>
+
+      <!-- ORDER SUMMARY -->
+      <aside class="order-summary">
+        <h2>Order Summary</h2>
+
+        <div class="summary-lines" id="summaryLines"></div>
+
+        <div class="summary-divider"></div>
+
+        <div class="coupon-row">
+          <input type="text" id="couponInput" placeholder="Promo code" class="coupon-input"/>
+          <button onclick="applyCoupon()" class="coupon-btn">Apply</button>
+        </div>
+        <div id="couponMsg" class="coupon-msg"></div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-row subtotal-row">
+          <span>Subtotal</span><span id="subtotal">₹0</span>
+        </div>
+        <div class="summary-row">
+          <span>Delivery Fee</span><span id="deliveryFee">₹40</span>
+        </div>
+        <div class="summary-row discount-row" id="discountRow" style="display:none;">
+          <span>Discount</span><span id="discountAmt" class="green">-₹0</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-row total-row">
+          <span>Total</span><span id="grandTotal">₹0</span>
+        </div>
+
+        <div class="delivery-info">
+          <p>🚚 <strong>Free delivery</strong> on orders above ₹500</p>
+          <p>⏱ Estimated delivery: <strong>30–45 min</strong></p>
+        </div>
+
+        <button class="checkout-btn" onclick="checkout()">Proceed to Checkout →</button>
+
+        <div class="payment-icons">
+          <span>💳</span><span>📱</span><span>🏦</span>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- STEP 1: ADDRESS MODAL -->
+<div class="modal-overlay" id="addressModal" style="display:none;">
+  <div class="modal modal-wide">
+    <button class="modal-close" onclick="closeAddressModal()">✕</button>
+    <div class="modal-icon">📍</div>
+    <h2>Delivery Address</h2>
+    <p class="modal-sub">Where should we bring your groceries?</p>
+
+    <div class="address-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="addrName" placeholder="Arjun Mehta" class="form-input" oninput="clearFieldError('addrName')" />
+          <span class="field-error" id="addrNameErr"></span>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="text" id="addrPhone" placeholder="+91 98765 43210" class="form-input" oninput="clearFieldError('addrPhone')" />
+          <span class="field-error" id="addrPhoneErr"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Street Address</label>
+        <input type="text" id="addrStreet" placeholder="42, MG Road, Sector 17" class="form-input" oninput="clearFieldError('addrStreet')" />
+        <span class="field-error" id="addrStreetErr"></span>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>City</label>
+          <input type="text" id="addrCity" placeholder="Chandigarh" class="form-input" oninput="clearFieldError('addrCity')" />
+          <span class="field-error" id="addrCityErr"></span>
+        </div>
+        <div class="form-group">
+          <label>State</label>
+          <input type="text" id="addrState" placeholder="Punjab" class="form-input" oninput="clearFieldError('addrState')" />
+          <span class="field-error" id="addrStateErr"></span>
+        </div>
+        <div class="form-group">
+          <label>Pincode</label>
+          <input type="text" id="addrPin" placeholder="160001" class="form-input" maxlength="6" oninput="clearFieldError('addrPin')" />
+          <span class="field-error" id="addrPinErr"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Delivery Instructions <span class="optional">(optional)</span></label>
+        <input type="text" id="addrNote" placeholder="Leave at door, ring bell twice…" class="form-input" />
+      </div>
+
+      <div class="payment-method-section">
+        <label><strong>Payment Method</strong></label>
+        <div class="payment-options">
+          <label class="pay-opt active-pay" id="payOptCod">
+            <input type="radio" name="payment" value="cod" checked onchange="selectPay(this)" /> 💵 Cash on Delivery
+          </label>
+          <label class="pay-opt" id="payOptUpi">
+            <input type="radio" name="payment" value="upi" onchange="selectPay(this)" /> 📱 UPI
+          </label>
+          <label class="pay-opt" id="payOptCard">
+            <input type="radio" name="payment" value="card" onchange="selectPay(this)" /> 💳 Card
+          </label>
+        </div>
+      </div>
+
+      <div id="addrError" class="addr-error"></div>
+
+      <button class="checkout-btn" onclick="submitAddress()">Place Order →</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2: ORDER CONFIRMED MODAL -->
+<div class="modal-overlay" id="checkoutModal" style="display:none;">
+  <div class="modal">
+    <div class="modal-icon">🎉</div>
+    <h2>Order Placed!</h2>
+    <p>Your fresh groceries are on their way.</p>
+    <p class="modal-eta">🚚 Estimated arrival: <strong>30–45 minutes</strong></p>
+    <div id="modalOrderId" class="order-id"></div>
+    <div id="modalAddress" class="modal-address-summary"></div>
+    <button onclick="closeModal()" class="hero-btn">Back to Shop</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo">🌿 Fresh<span>Mart</span></span>
+      <p>Bringing nature's best to your table.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <a href="index.html">Shop</a>
+      <a href="deals.html">Deals</a>
+      <a href="cart.html">Cart</a>
+      <a href="about.html">About</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p>📞 +91 98765 43210</p>
+      <p>📧 hello@freshmart.in</p>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 FreshMart. All rights reserved.</div>
+</footer>
+
+<script src="products.js"></script>
+<script src="cart-utils.js"></script>
+<script src="auth.js"></script>
+<script src="cart.js"></script>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal" style="display:none;">
+  <div class="modal auth-modal">
+    <button class="modal-close" onclick="closeAuthModal()">✕</button>
+    <div class="auth-tabs">
+      <button id="loginTab" class="auth-tab active-tab" onclick="switchAuthTab('login')">Sign In</button>
+      <button id="signupTab" class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div>
+    <div id="loginForm">
+      <div class="modal-icon">🔐</div>
+      <h2>Welcome Back</h2>
+      <p class="modal-sub">Sign in to sync your cart &amp; orders</p>
+      <div class="auth-form">
+        <input type="email" id="loginEmail" placeholder="Email address" class="form-input"/>
+        <input type="password" id="loginPassword" placeholder="Password" class="form-input"/>
+        <span class="field-error" id="loginError"></span>
+        <button id="loginBtn" class="checkout-btn" onclick="handleLogin()">Sign In</button>
+        <p class="auth-switch">No account? <a href="#" onclick="switchAuthTab('signup')">Sign up free</a></p>
+      </div>
+    </div>
+    <div id="signupForm" style="display:none;">
+      <div class="modal-icon">🌿</div>
+      <h2>Create Account</h2>
+      <p class="modal-sub">Join FreshMart for a better experience</p>
+      <div class="auth-form">
+        <input type="text" id="signupName" placeholder="Full name" class="form-input"/>
+        <input type="email" id="signupEmail" placeholder="Email address" class="form-input"/>
+        <input type="password" id="signupPassword" placeholder="Password (min 6 chars)" class="form-input"/>
+        <input type="password" id="signupConfirm" placeholder="Confirm password" class="form-input"/>
+        <span class="field-error" id="signupError"></span>
+        <button id="signupBtn" class="checkout-btn" onclick="handleSignup()">Create Account</button>
+        <p class="auth-switch">Have an account? <a href="#" onclick="switchAuthTab('login')">Sign in</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="auth.js"></script>
+</body>
+</html>

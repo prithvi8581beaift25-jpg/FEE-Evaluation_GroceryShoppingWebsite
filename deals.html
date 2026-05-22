@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+// Theme toggle
+function toggleTheme() {
+  var d = document.documentElement;
+  var isDark = d.getAttribute('data-theme') === 'dark';
+  d.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  localStorage.setItem('fm_theme', isDark ? 'light' : 'dark');
+}
+(function() {
+  var saved = localStorage.getItem('fm_theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+  else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+</script>
+  <meta charset="UTF-8"/>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Deals – Fresh Mart</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <div class="nav-left">
+      <a href="index.html" class="logo"><span class="logo-leaf">🌿</span> Fresh<span>Mart</span></a>
+      <div class="nav-links">
+        <a href="index.html">Shop</a>
+        <a href="deals.html" class="active">Deals</a>
+        <a href="about.html">About</a>
+      </div>
+    </div>
+    <div class="nav-actions">
+            <!-- Auth Buttons (logged out) -->
+      <div id="authButtons" style="display:flex;gap:8px;align-items:center">
+        <button class="auth-nav-btn" onclick="openAuthModal('login')">Sign In</button>
+        <button class="auth-nav-btn auth-nav-btn-primary" onclick="openAuthModal('signup')">Sign Up</button>
+      </div>
+      <!-- User Menu (logged in) -->
+      <div id="userMenu" style="display:none;gap:8px;align-items:center">
+        <span id="userName" class="user-greeting"></span>
+        <button class="auth-nav-btn" onclick="logout()">Logout</button>
+      </div>
+      <a href="cart.html" class="cart-btn">🛒 Cart <span class="cart-count" id="cartCount">0</span></a>
+      <div class="theme-toggle-wrap">
+        <span class="theme-icon">☀️</span>
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle dark mode"></button>
+        <span class="theme-icon">🌙</span>
+      </div>
+      <button class="hamburger" onclick="toggleMenu()">☰</button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">🛍 Shop</a>
+    <a href="deals.html">🔥 Deals</a>
+    <a href="about.html">ℹ️ About</a>
+    <a href="cart.html">🛒 Cart</a>
+    <div class="mobile-menu-divider"></div>
+    <div id="mobileAuthButtons" class="mobile-auth-row">
+      <button class="auth-nav-btn" onclick="openAuthModal('login');toggleMenu()">Sign In</button>
+      <button class="auth-nav-btn auth-nav-btn-primary" onclick="openAuthModal('signup');toggleMenu()">Sign Up</button>
+    </div>
+    <div id="mobileUserRow" class="mobile-user-row" style="display:none">
+      <span id="mobileUserName" class="mobile-username"></span>
+      <button class="auth-nav-btn" onclick="logout()">Logout</button>
+    </div>
+    <div class="mobile-theme-row">
+      <span style="font-size:0.85rem;color:var(--gray)">Dark Mode</span>
+      <div class="theme-toggle-wrap">
+        <span class="theme-icon">☀️</span>
+        <button class="theme-toggle" onclick="toggleTheme()"></button>
+        <span class="theme-icon">🌙</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- DEALS HERO -->
+<section class="deals-hero">
+  <div class="deals-hero-content">
+    <p class="hero-tag" style="color:#22c55e;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);display:inline-block;padding:6px 18px;border-radius:50px;font-weight:700;font-size:0.85rem;letter-spacing:1px;text-transform:uppercase;">Limited Time Offers</p>
+    <h1>Today's Best <span class="highlight">Deals</span></h1>
+    <p style="color:#94a3b8;font-size:1.05rem;">Freshness at unbeatable prices. Updated daily.</p>
+  </div>
+  <div class="countdown-strip">
+    <span>⏳ Deals reset in:</span>
+    <div class="countdown">
+      <div class="time-block"><span id="hours">00</span><label>hrs</label></div>
+      <span class="colon">:</span>
+      <div class="time-block"><span id="mins">00</span><label>min</label></div>
+      <span class="colon">:</span>
+      <div class="time-block"><span id="secs">00</span><label>sec</label></div>
+    </div>
+  </div>
+</section>
+
+<!-- COUPONS SECTION -->
+<section class="coupons-section">
+  <div class="container">
+    <h2 class="section-title">🎟 Coupon Codes</h2>
+    <div class="coupons-grid">
+      <div class="coupon-card">
+        <div class="coupon-left">
+          <span class="coupon-emoji">🏷</span>
+          <div>
+            <div class="coupon-code">FRESH10</div>
+            <div class="coupon-desc">10% off on any order</div>
+          </div>
+        </div>
+        <button class="copy-btn" onclick="copyCoupon('FRESH10', this)">Copy</button>
+      </div>
+      <div class="coupon-card">
+        <div class="coupon-left">
+          <span class="coupon-emoji">💚</span>
+          <div>
+            <div class="coupon-code">SAVE20</div>
+            <div class="coupon-desc">20% off on orders above ₹300</div>
+          </div>
+        </div>
+        <button class="copy-btn" onclick="copyCoupon('SAVE20', this)">Copy</button>
+      </div>
+      <div class="coupon-card featured-coupon">
+        <div class="coupon-left">
+          <span class="coupon-emoji">🎉</span>
+          <div>
+            <div class="coupon-code">MART50</div>
+            <div class="coupon-desc">50% off – Limited time mega deal!</div>
+          </div>
+        </div>
+        <button class="copy-btn" onclick="copyCoupon('MART50', this)">Copy</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- BUNDLES -->
+<section class="bundles-section">
+  <div class="container">
+    <h2 class="section-title">📦 Value Bundles</h2>
+    <div class="bundles-grid">
+      <div class="bundle-card">
+        <div class="bundle-emojis">🥦🥕🍅🧅</div>
+        <h3>Veggie Starter Pack</h3>
+        <p>Broccoli + Carrots + Tomatoes + Onions</p>
+        <div class="bundle-price">
+          <span class="old-price">₹150</span>
+          <span class="new-price">₹110</span>
+        </div>
+        <button class="add-btn" onclick="addBundleToCart([9,10,11,14])">Add Bundle</button>
+      </div>
+      <div class="bundle-card">
+        <div class="bundle-emojis">🍎🍌🍊🍇</div>
+        <h3>Fruit Fiesta Pack</h3>
+        <p>Apples + Bananas + Oranges + Grapes</p>
+        <div class="bundle-price">
+          <span class="old-price">₹280</span>
+          <span class="new-price">₹200</span>
+        </div>
+        <button class="add-btn" onclick="addBundleToCart([1,2,7,4])">Add Bundle</button>
+      </div>
+      <div class="bundle-card">
+        <div class="bundle-emojis">🥛🧀🧈🍦</div>
+        <h3>Dairy Delight Pack</h3>
+        <p>Milk + Paneer + Butter + Yogurt</p>
+        <div class="bundle-price">
+          <span class="old-price">₹320</span>
+          <span class="new-price">₹250</span>
+        </div>
+        <button class="add-btn" onclick="addBundleToCart([17,18,20,19])">Add Bundle</button>
+      </div>
+      <div class="bundle-card nonveg-bundle">
+        <div class="bundle-emojis">🍗🥚🐟🦐</div>
+        <h3>Non-Veg Feast Pack</h3>
+        <p>Chicken Breast + Eggs + Salmon + Prawns</p>
+        <div class="bundle-price">
+          <span class="old-price">₹1,200</span>
+          <span class="new-price">₹890</span>
+        </div>
+        <button class="add-btn nonveg-add-btn" onclick="addBundleToCart([33,35,36,37])">Add Bundle</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="toast" id="toast"></div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo">🌿 Fresh<span>Mart</span></span>
+      <p>Bringing nature's best to your table.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <a href="index.html">Shop</a>
+      <a href="deals.html">Deals</a>
+      <a href="cart.html">Cart</a>
+      <a href="about.html">About</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p>📞 +91 98765 43210</p>
+      <p>📧 hello@freshmart.in</p>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 FreshMart. All rights reserved.</div>
+</footer>
+
+<script src="products.js"></script>
+<script src="cart-utils.js"></script>
+<script src="auth.js"></script>
+<script src="deals.js"></script>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal" style="display:none;">
+  <div class="modal auth-modal">
+    <button class="modal-close" onclick="closeAuthModal()">✕</button>
+    <div class="auth-tabs">
+      <button id="loginTab" class="auth-tab active-tab" onclick="switchAuthTab('login')">Sign In</button>
+      <button id="signupTab" class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div>
+    <div id="loginForm">
+      <div class="modal-icon">🔐</div>
+      <h2>Welcome Back</h2>
+      <p class="modal-sub">Sign in to sync your cart &amp; orders</p>
+      <div class="auth-form">
+        <input type="email" id="loginEmail" placeholder="Email address" class="form-input"/>
+        <input type="password" id="loginPassword" placeholder="Password" class="form-input"/>
+        <span class="field-error" id="loginError"></span>
+        <button id="loginBtn" class="checkout-btn" onclick="handleLogin()">Sign In</button>
+        <p class="auth-switch">No account? <a href="#" onclick="switchAuthTab('signup')">Sign up free</a></p>
+      </div>
+    </div>
+    <div id="signupForm" style="display:none;">
+      <div class="modal-icon">🌿</div>
+      <h2>Create Account</h2>
+      <p class="modal-sub">Join FreshMart for a better experience</p>
+      <div class="auth-form">
+        <input type="text" id="signupName" placeholder="Full name" class="form-input"/>
+        <input type="email" id="signupEmail" placeholder="Email address" class="form-input"/>
+        <input type="password" id="signupPassword" placeholder="Password (min 6 chars)" class="form-input"/>
+        <input type="password" id="signupConfirm" placeholder="Confirm password" class="form-input"/>
+        <span class="field-error" id="signupError"></span>
+        <button id="signupBtn" class="checkout-btn" onclick="handleSignup()">Create Account</button>
+        <p class="auth-switch">Have an account? <a href="#" onclick="switchAuthTab('login')">Sign in</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
